@@ -31,7 +31,7 @@
   },
   "金风通用模板": {
     "label": "金风通用模板",
-    "summary": "A Goldwind internal reporting template reconstructed from the 2024 work-planning deck, with fixed ending page and editable cover title/name/date only",
+    "summary": "A native editable Goldwind internal reporting template with fixed master/layout anchors, TOC left wind image, and cover title/name/date slots only",
     "keywords": ["Goldwind", "金风科技", "工作策划", "内部汇报", "年度策划"]
   },
   "government_blue": {

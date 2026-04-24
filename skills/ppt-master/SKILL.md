@@ -3,16 +3,17 @@ name: ppt-master
 description: >
   Goldwind-oriented PPT production workflow. On first invocation, always enters
   an official intake mode, asking for a reference style deck, source materials,
-  and online research preference before continuing to the SVG-to-PPTX pipeline.
+  and online research preference before continuing to the native Goldwind PPTX
+  or SVG-to-PPTX pipeline.
   Use when user asks to "create PPT", "make presentation", "生成PPT", "做PPT",
   "制作演示文稿", or mentions "ppt-master".
 ---
 
 # PPT Master Skill
 
-> AI-driven multi-format SVG content generation system. Converts source documents into high-quality SVG pages through multi-role collaboration and exports to PPTX.
+> AI-driven Goldwind PPT production system. Converts source materials into a native editable Goldwind PPTX when `金风通用模板` is selected, and keeps the SVG-to-PPTX pipeline for non-native templates and reference previews.
 
-**Core Pipeline**: `Source Document → Create Project → Template Option → Strategist → [Image_Generator] → Executor → Post-processing → Export`
+**Core Pipeline**: `Source Document → Create Project → Template Option → Strategist → [Image_Generator] → Executor → Native Goldwind PPTX or SVG Post-processing → Export`
 
 > [!CAUTION]
 > ## 🚨 Global Execution Discipline (MANDATORY)
@@ -108,8 +109,10 @@ Goldwind customization rule:
 - Extract and summarize the historical PPT style before writing the project `design_spec.md`.
 - The extracted style should guide colors, typography, page rhythm, header/footer treatment, logo placement, decorative motifs, chart styling, and image usage.
 - If the user explicitly says `金风通用模板`, `工作策划模板`, or asks to use the 2024 work-planning style as a reusable template, select the built-in optional template `金风通用模板`.
+- For `金风通用模板`, the default deliverable MUST be a native editable PPTX built from `templates/layouts/金风通用模板/goldwind_native_base.pptx` via `scripts/goldwind_native_deck.py`. The SVG templates remain the visual/reference fallback, not the primary export path.
 - For `金风通用模板`, the cover page has only three dynamic text slots: `{{TITLE}}`, `{{AUTHOR}}`, and `{{DATE}}`. Use a user-provided title when present; otherwise auto-generate a title from the source material. Do not ask the user to edit any other cover text.
-- For `金风通用模板`, the ending page MUST be rebuilt as editable SVG/PPT elements that match `04_ending.svg` in structure, coordinates, typography, logo/rail/wave/accent placement, and visual hierarchy. The current ending copy is the default value only; it may be changed when the user requests different wording. Never rasterize the ending page as a full-page image.
+- For `金风通用模板`, the ending page MUST remain editable PowerPoint elements that match the Goldwind cover/ending layout structure, coordinates, typography, logo/rail/wave/accent placement, and visual hierarchy. The current ending copy is the default value only; it may be changed when the user requests different wording. Never rasterize the ending page as a full-page image.
+- After building a native Goldwind PPTX, run `python3 ${SKILL_DIR}/scripts/goldwind_native_check.py <output.pptx>` and `python3 ${SKILL_DIR}/scripts/pptx_visibility_check.py <output.pptx>`. Any failure is blocking.
 
 ## Main Pipeline Scripts
 
@@ -126,6 +129,8 @@ Goldwind customization rule:
 | `${SKILL_DIR}/scripts/svg_quality_checker.py` | SVG quality check |
 | `${SKILL_DIR}/scripts/layout_sanity_check.py` | SVG layout collision check for image/text overlaps |
 | `${SKILL_DIR}/scripts/template_mimic_check.py` | Goldwind template-mimic gate check |
+| `${SKILL_DIR}/scripts/goldwind_native_deck.py` | Build an editable native PPTX from the built-in Goldwind PowerPoint master/layout package |
+| `${SKILL_DIR}/scripts/goldwind_native_check.py` | Native Goldwind PPTX gate check for TOC image, layout binding, rotated copyright, and media integrity |
 | `${SKILL_DIR}/scripts/total_md_split.py` | Speaker notes splitting |
 | `${SKILL_DIR}/scripts/finalize_svg.py` | SVG post-processing (unified entry) |
 | `${SKILL_DIR}/scripts/svg_to_pptx.py` | Export to PPTX |
@@ -190,10 +195,12 @@ Hard mimic requirements:
 2. Produce a project-level template mimic contract in `design_spec.md` (or a companion `<project_path>/template_mimic.md`) covering page-type mapping, title hierarchy, font plan, logo coordinates, left copyright rail, cover/TOC/ending structure, and reusable asset exclusions.
 3. Only promote true reusable template elements. Content-specific figures, including the simulation/arrow figure previously misidentified from the 2024 work-planning deck, MUST NOT be treated as template assets.
 4. For `金风通用模板`, the bottom-right three-stripe page-number block (`x=1204, y=620, w=76, h=60`) is a forbidden non-template artifact. Do not generate it on any page.
-5. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page element structure is locked to `04_ending.svg`, while ending text uses current defaults unless the user asks to modify it. The ending page must stay editable and must not be delivered as one flattened image.
-6. Preserve the dotted wave background as a full-width template layer: cover/ending use `bottom_wave.png` at `x=0, y=316, w=1280, h=390`; TOC uses `toc_wave.png` at `x=0, y=120, w=1280, h=480`. Do not crop it to a left-side local decoration. Do not reuse the 1280x480 TOC wave in the 1280x390 lower-wave box, because `finalize_svg.py` can otherwise shrink it to 1040px wide during aspect-ratio fitting.
-7. Preserve the left rail copyright text at the imported anchor `matrix(0 -1.33 1.33 0 40.71 624.67)` with `font-size=8`; do not approximate it with a shifted rotated text box.
-8. Preserve the TOC page as a four-item primary agenda only: no description rows, no secondary explanatory lines. Match the historical reference anchors (`目录` x=736 y=184; item baselines y=251/326/401/475; numbers x=736; item titles x=784).
+5. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page element structure is locked to the native Goldwind cover/ending layout, while ending text uses current defaults unless the user asks to modify it. The ending page must stay editable and must not be delivered as one flattened image.
+6. Use the native Goldwind pathway by default: `python3 ${SKILL_DIR}/scripts/goldwind_native_deck.py --spec <deck_spec.json> -o <output.pptx>`. This avoids SVG matrix/rotation loss in WPS and keeps logo, rail, wave/background, and master/layout elements editable or natively inherited.
+7. Preserve the dotted wave background as a full-width template layer on cover/ending and other wave-background layouts. In SVG fallback only, use `bottom_wave.png` at `x=0, y=316, w=1280, h=390`. Do not crop it to a local decoration.
+8. Preserve the TOC page as the native left-image agenda layout, not a dotted-wave substitute: use `toc_wind_left.png` at `x=0, y=-0.006in, w=6.92in, h=7.506in`, with the right TOC text box at `x=7.653in, y=0.187in, w=4.899in, h=6.614in`. Keep four primary entries only; no description rows or secondary explanatory lines.
+9. Preserve the left rail copyright as a native rotated PowerPoint object when exporting PPTX: `x=-2.376in, y=3.371in, w=5.512in, h=0.76in, rotation=270`, `font-size=8`. In SVG fallback previews, retain the imported `matrix(0 -1.33 1.33 0 40.71 624.67)` anchor, but do not use SVG fallback as the primary Goldwind deliverable.
+10. Run `goldwind_native_check.py` and `pptx_visibility_check.py` on the final native PPTX; any missing TOC left image, top-left horizontal copyright text, missing media, or wrong layout binding is a blocking failure.
 
 If the reference is screenshots or images rather than PPTX, preserve them as style evidence and summarize visible style cues before Step 4.
 
