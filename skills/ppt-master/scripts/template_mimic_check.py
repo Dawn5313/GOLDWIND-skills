@@ -22,6 +22,12 @@ REQUIRED_TEMPLATE_FILES = {
     "toc_wave.png",
 }
 FORBIDDEN_TEMPLATE_ASSETS = {"image5.png", "cover_wind.jpg"}
+FORBIDDEN_PAGE_MARKER_PATTERNS = {
+    "legacy bottom-right page-marker top stripe": r'<rect[^>]+x="1204"[^>]+y="620"[^>]+width="76"',
+    "legacy bottom-right page-marker middle stripe": r'<rect[^>]+x="1204"[^>]+y="638"[^>]+width="76"',
+    "legacy bottom-right page-marker bottom stripe": r'<rect[^>]+x="1204"[^>]+y="656"[^>]+width="76"',
+    "legacy bottom-right page-marker number": r'<text[^>]+x="1242"[^>]+y="675"',
+}
 ENDING_FIXED_TEXT = [
     "THANKS",
     "金风科技股份有限公司",
@@ -84,11 +90,19 @@ def check_shared_anchors(svg_name: str, svg: str, errors: list[str]) -> None:
         "top-right logo at x=1048 y=28": r'<image[^>]+x="1048"[^>]+y="28"[^>]+logo\.png',
         "left rail x=72/73": r'<line[^>]+x1="7[23]"[^>]+y1="0"[^>]+y2="720"',
         "copyright rail text": r'GOLDWIND SCIENCE &amp; TECHNOLOGY CO\., LTD\.',
-        "page-number block x=1204 y=620": r'<rect[^>]+x="1204"[^>]+y="620"[^>]+width="76"',
     }
     for label, pattern in anchors.items():
         if not contains_exact_anchor(svg, pattern):
             errors.append(f"{svg_name}: missing anchor: {label}")
+    check_no_legacy_page_marker(svg_name, svg, errors)
+
+
+def check_no_legacy_page_marker(svg_name: str, svg: str, errors: list[str]) -> None:
+    for label, pattern in FORBIDDEN_PAGE_MARKER_PATTERNS.items():
+        if contains_exact_anchor(svg, pattern):
+            errors.append(f"{svg_name}: forbidden non-template element found: {label}")
+    if "{{PAGE_NUM}}" in svg:
+        errors.append(f"{svg_name}: PAGE_NUM placeholder is forbidden in 金风通用模板")
 
 
 def check_cover(template_dir: Path, errors: list[str]) -> None:
@@ -129,12 +143,15 @@ def check_content_templates(template_dir: Path, errors: list[str]) -> None:
 
 
 def check_project_outputs(project_dir: Path, errors: list[str]) -> None:
-    svg_dir = project_dir / "svg_output"
-    if not svg_dir.exists():
-        return
-    svgs = sorted(svg_dir.glob("*.svg"))
+    output_svgs = sorted((project_dir / "svg_output").glob("*.svg")) if (project_dir / "svg_output").exists() else []
+    final_svgs = sorted((project_dir / "svg_final").glob("*.svg")) if (project_dir / "svg_final").exists() else []
+    # Prefer svg_output because this gate runs before finalize_svg.py in the
+    # normal pipeline; svg_final may still contain stale files from a prior run.
+    svgs = output_svgs or final_svgs
     if not svgs:
         return
+    for svg_path in svgs:
+        check_no_legacy_page_marker(svg_path.name, read_text(svg_path), errors)
     first = read_text(svgs[0])
     last = read_text(svgs[-1])
     if "toc_wave.png" not in first and "reference_toc_wave.png" not in first:

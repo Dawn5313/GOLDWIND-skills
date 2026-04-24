@@ -54,7 +54,7 @@ description: >
 >
 > ```text
 > 启动成功。现已进入金风科技PPT制作流程。为确保版式风格、内容整理及扩展资料准备准确无误，请您依次提供以下三项资料：
-> 1. PPT样式参考：请发送一份您过往汇报中使用的PPT或历史模板文件，我将自动提取版式与视觉风格，并按该风格进行临摹制作。
+> 1. PPT样式参考：请发送一份您过往汇报中使用的PPT或历史模板文件，我将自动提取版式与视觉风格，并按该风格进行临摹制作；也可以选择使用本技能包中自带的金风通用模板。
 > 2. 内容素材资料：您可以直接发送文字内容，也可以发送一个或多个文件；我将自动完成整理、提炼与结构化处理，并用于后续PPT编排。
 > 3. 联网扩展需求：如需我联网补充资料，请明确说明希望扩展的是PPT内图片素材、Icon素材，还是内容资料；我将按您的要求执行扩展搜索与整理。如无需联网，也请直接说明。
 > ```
@@ -124,10 +124,12 @@ Goldwind customization rule:
 | `${SKILL_DIR}/scripts/analyze_images.py` | Image analysis |
 | `${SKILL_DIR}/scripts/image_gen.py` | AI image generation (multi-provider) |
 | `${SKILL_DIR}/scripts/svg_quality_checker.py` | SVG quality check |
+| `${SKILL_DIR}/scripts/layout_sanity_check.py` | SVG layout collision check for image/text overlaps |
 | `${SKILL_DIR}/scripts/template_mimic_check.py` | Goldwind template-mimic gate check |
 | `${SKILL_DIR}/scripts/total_md_split.py` | Speaker notes splitting |
 | `${SKILL_DIR}/scripts/finalize_svg.py` | SVG post-processing (unified entry) |
 | `${SKILL_DIR}/scripts/svg_to_pptx.py` | Export to PPTX |
+| `${SKILL_DIR}/scripts/pptx_visibility_check.py` | Post-export PPTX blank-slide / missing-media check |
 | `${SKILL_DIR}/scripts/update_spec.py` | Propagate a `spec_lock.md` color / font_family change across all generated SVGs |
 
 For complete tool documentation, see `${SKILL_DIR}/scripts/README.md`.
@@ -184,9 +186,10 @@ Use the generated import package as the primary style evidence:
 Hard mimic requirements:
 
 1. Read every SVG file listed in `reference_svg_selection.json` before writing `design_spec.md`.
-2. Produce a project-level template mimic contract in `design_spec.md` (or a companion `<project_path>/template_mimic.md`) covering page-type mapping, title hierarchy, font plan, logo coordinates, left copyright rail, page-number block, cover/TOC/ending structure, and reusable asset exclusions.
+2. Produce a project-level template mimic contract in `design_spec.md` (or a companion `<project_path>/template_mimic.md`) covering page-type mapping, title hierarchy, font plan, logo coordinates, left copyright rail, cover/TOC/ending structure, and reusable asset exclusions.
 3. Only promote true reusable template elements. Content-specific figures, including the simulation/arrow figure previously misidentified from the 2024 work-planning deck, MUST NOT be treated as template assets.
-4. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page fixed text only.
+4. For `金风通用模板`, the bottom-right three-stripe page-number block (`x=1204, y=620, w=76, h=60`) is a forbidden non-template artifact. Do not generate it on any page.
+5. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page fixed text only.
 
 If the reference is screenshots or images rather than PPTX, preserve them as style evidence and summarize visible style cues before Step 4.
 
@@ -392,6 +395,12 @@ python3 ${SKILL_DIR}/scripts/template_mimic_check.py <project_path> --tolerance 
 
 Any failure must be fixed before speaker notes or export.
 
+Run the layout sanity check before speaker notes. Any image/text overlap failure must be fixed by resizing, moving, or splitting the affected content before export:
+
+```bash
+python3 ${SKILL_DIR}/scripts/layout_sanity_check.py <project_path>
+```
+
 **Logic Construction Phase**:
 - Generate speaker notes → `<project_path>/notes/total.md`
 
@@ -433,6 +442,13 @@ python3 ${SKILL_DIR}/scripts/svg_to_pptx.py <project_path> -s final
 > ❌ **NEVER** use `cp` as a substitute for `finalize_svg.py` — it performs multiple critical processing steps
 > ❌ **NEVER** export directly from `svg_output/` — MUST use `-s final` to export from `svg_final/`
 > ❌ **NEVER** add extra flags like `--only`
+
+**Step 7.4** — Verify the native editable PPTX before delivery:
+```bash
+python3 ${SKILL_DIR}/scripts/pptx_visibility_check.py <project_path>/exports/<native_output>.pptx
+```
+
+If the SVG reference deck (`*_svg.pptx`) is produced without PNG fallback support, treat it as an internal layout reference only. The native editable PPTX is the deliverable for WPS/PowerPoint viewing.
 
 ---
 

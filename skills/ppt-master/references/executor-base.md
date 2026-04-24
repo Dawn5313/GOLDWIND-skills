@@ -20,11 +20,13 @@ If template files exist in the project's `templates/` directory, the template st
 
 When the selected template is `金风通用模板` or the project uses a historical Goldwind PPT reference:
 
-- Follow the template's fixed coordinates for the top-right logo, left copyright rail, bottom-right page-number block, header line, section number, and quoted page title.
+- Follow the template's fixed coordinates for the top-right logo, left copyright rail, header line, section number, and quoted page title.
+- Do not add the bottom-right three-stripe page-number block (`x=1204, y=620`). It is a misidentified non-template artifact and is forbidden for `金风通用模板`.
 - Cover page text may vary only by `TITLE`, `AUTHOR`, and `DATE`. Use a user-provided title when available; otherwise generate one from the source material. Do not add or expose extra cover text placeholders.
 - Ending page text is fixed. Do not change, translate, summarize, rewrite, or parameterize any ending-page text.
 - Use dotted wave artwork for cover/TOC/ending pages. Do not use the content-specific simulation/arrow figure or unrelated wind/engineering images as reusable template assets.
-- After SVG generation and before notes/export, run `python3 scripts/template_mimic_check.py <project_path> --tolerance 0` and fix any failure.
+- On dense table/image pages, reserve distinct zones for tables, text, and screenshots. Images must not overlap any table text or paragraph text; if space is tight, reduce row height, crop screenshots, or split the slide.
+- After SVG generation and before notes/export, run `python3 scripts/template_mimic_check.py <project_path> --tolerance 0` and `python3 scripts/layout_sanity_check.py <project_path>`; fix any failure.
 
 ### Page-Template Mapping Declaration (Required Output)
 

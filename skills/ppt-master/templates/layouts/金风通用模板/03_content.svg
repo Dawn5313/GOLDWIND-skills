@@ -3,10 +3,6 @@
   <image x="1048" y="28" width="168" height="50" xlink:href="logo.png" preserveAspectRatio="xMidYMid meet"/>
   <line x1="72" y1="0" x2="72" y2="720" stroke="#DDDDDD" stroke-width="2"/>
   <text x="40" y="625" font-family="Arial, Microsoft YaHei, sans-serif" font-size="10" fill="#515151" transform="rotate(-90 40 625)">© GOLDWIND SCIENCE &amp; TECHNOLOGY CO., LTD.</text>
-  <rect x="1204" y="620" width="76" height="18" fill="#515151"/>
-  <rect x="1204" y="638" width="76" height="18" fill="#F1F1F1"/>
-  <rect x="1204" y="656" width="76" height="24" fill="#848484"/>
-  <text x="1242" y="675" text-anchor="middle" font-family="Arial, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">{{PAGE_NUM}}</text>
   <line x1="0" y1="84" x2="328" y2="84" stroke="#A6A9AC" stroke-width="2"/>
   <text x="84" y="66" font-family="Arial, Microsoft YaHei, sans-serif" font-size="32" font-weight="bold" fill="#063360">{{SECTION_NUM}}</text>
   <text x="138" y="66" font-family="Arial, Microsoft YaHei, sans-serif" font-size="32" font-weight="bold" fill="#063360">「{{PAGE_TITLE}}」</text>

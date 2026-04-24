@@ -4,10 +4,6 @@
   <line x1="72" y1="0" x2="72" y2="720" stroke="#FFFFFF" stroke-width="1"/>
   <line x1="73" y1="0" x2="73" y2="720" stroke="#DDDDDD" stroke-width="1"/>
   <text x="40" y="625" font-family="Arial, Microsoft YaHei, sans-serif" font-size="10" fill="#A6A9AC" transform="rotate(-90 40 625)">© GOLDWIND SCIENCE &amp; TECHNOLOGY CO., LTD.</text>
-  <rect x="1204" y="620" width="76" height="18" fill="#515151"/>
-  <rect x="1204" y="638" width="76" height="18" fill="#F1F1F1"/>
-  <rect x="1204" y="656" width="76" height="24" fill="#848484"/>
-  <text x="1242" y="675" text-anchor="middle" font-family="Arial, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">02</text>
   <image x="0" y="120" width="690" height="300" xlink:href="toc_wave.png" preserveAspectRatio="xMidYMid meet"/>
   <text x="736" y="184" font-family="Arial, Microsoft YaHei, sans-serif" font-size="38" font-weight="bold" fill="#515151">目录</text>
   <text x="736" y="260" font-family="Arial, Microsoft YaHei, sans-serif" font-size="18" font-weight="bold" fill="#515151">1.</text>

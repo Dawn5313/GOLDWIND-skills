@@ -57,6 +57,7 @@ If the project uses a historical Goldwind PPT reference or the built-in `金风�
 3. Add a template-mimic contract to the design spec covering page-type mapping, exact reusable anchors, title hierarchy, fonts, and excluded non-template assets.
 4. Lock first/last page behavior for `金风通用模板`: cover text may vary only by title, author/name, and date; if no user title is provided, auto-generate it from source content. Ending-page text is fixed and must not be changed.
 5. Do not promote content-specific figures from the reference deck as template assets. In particular, the simulation/arrow figure is excluded.
+6. The bottom-right three-stripe page-number block at `x=1204, y=620` is explicitly excluded from `金风通用模板`; do not include it in anchors, placeholders, or page mapping.
 
 ⛔ **BLOCKING**: After completing the read above, provide professional recommendations for the following eight items, then **present them as a bundled package to the user and wait for explicit confirmation or modifications**.
 
