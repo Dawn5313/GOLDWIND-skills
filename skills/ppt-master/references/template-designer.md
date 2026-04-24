@@ -48,7 +48,7 @@ Input priority for PPTX-backed template creation:
 | 01 | `01_cover.svg` | Cover | Fixed structure: title, subtitle, date, organization |
 | 02 | `02_chapter.svg` | Chapter page | Fixed structure: chapter number, chapter title |
 | 03 | `03_content.svg` | Content page | Flexible structure: only defines header/footer; content area freely laid out by AI |
-| 04 | `04_ending.svg` | Ending page | Fixed structure: thank-you message, contact info |
+| 04 | `04_ending.svg` | Ending page | Fixed editable element structure: thank-you message and contact info positions |
 | -- | `02_toc.svg` | Table of contents | Optional: TOC title, chapter list (number + title) |
 
 **Design philosophy**: Templates define visual consistency and structural pages; content pages maintain maximum flexibility.

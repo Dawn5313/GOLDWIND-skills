@@ -3,8 +3,8 @@
   <image x="1048" y="28" width="168" height="50" xlink:href="logo.png" preserveAspectRatio="xMidYMid meet"/>
   <line x1="72" y1="0" x2="72" y2="720" stroke="#FFFFFF" stroke-width="1"/>
   <line x1="73" y1="0" x2="73" y2="720" stroke="#DDDDDD" stroke-width="1"/>
-  <text x="40" y="625" font-family="Arial, Microsoft YaHei, sans-serif" font-size="10" fill="#A6A9AC" transform="rotate(-90 40 625)">© GOLDWIND SCIENCE &amp; TECHNOLOGY CO., LTD.</text>
-  <image x="80" y="316" width="1180" height="390" xlink:href="toc_wave.png" preserveAspectRatio="xMidYMid slice"/>
+  <text xml:space="preserve" transform="matrix(0 -1.33 1.33 0 40.71 624.67)" font-family="Arial, Microsoft YaHei, sans-serif" font-size="8" fill="#515151" y="0" x="0">© GOLDWIND SCIENCE &amp; TECHNOLOGY CO., LTD.</text>
+  <image x="0" y="316" width="1280" height="390" xlink:href="toc_wave.png" preserveAspectRatio="xMidYMid slice"/>
   <rect x="73" y="260" width="3" height="76" fill="#023162"/>
   <text x="640" y="220" text-anchor="middle" font-family="Arial, Microsoft YaHei, sans-serif" font-size="72" font-weight="bold" fill="#023162">{{TITLE}}</text>
   <text x="640" y="466" text-anchor="middle" font-family="Microsoft YaHei, Arial, sans-serif" font-size="22" fill="#404040">汇报人 - {{AUTHOR}}</text>

@@ -28,13 +28,13 @@ FORBIDDEN_PAGE_MARKER_PATTERNS = {
     "legacy bottom-right page-marker bottom stripe": r'<rect[^>]+x="1204"[^>]+y="656"[^>]+width="76"',
     "legacy bottom-right page-marker number": r'<text[^>]+x="1242"[^>]+y="675"',
 }
-ENDING_FIXED_TEXT = [
-    "THANKS",
-    "金风科技股份有限公司",
-    "GOLDWIND SCIENCE &amp; TECHNOLOGY CO., LTD",
-    "北京金风科创风电设备有限公司",
-    "BEIJING GOLDWIND SCIENCE &amp; CREATION WINDPOWER EQUIPMENT CO., LTD.",
-]
+ENDING_TEXT_ANCHORS = {
+    "ending headline text anchor x=186 y=170": r'<text[^>]+x="186"[^>]+y="170"',
+    "ending first CN line x=188 y=300": r'<text[^>]+x="188"[^>]+y="300"',
+    "ending first EN line x=188 y=342": r'<text[^>]+x="188"[^>]+y="342"',
+    "ending second CN line x=188 y=426": r'<text[^>]+x="188"[^>]+y="426"',
+    "ending second EN line x=188 y=466": r'<text[^>]+x="188"[^>]+y="466"',
+}
 
 
 def read_text(path: Path) -> str:
@@ -90,11 +90,46 @@ def check_shared_anchors(svg_name: str, svg: str, errors: list[str]) -> None:
         "top-right logo at x=1048 y=28": r'<image[^>]+x="1048"[^>]+y="28"[^>]+logo\.png',
         "left rail x=72/73": r'<line[^>]+x1="7[23]"[^>]+y1="0"[^>]+y2="720"',
         "copyright rail text": r'GOLDWIND SCIENCE &amp; TECHNOLOGY CO\., LTD\.',
+        "copyright rail original transform": r'transform="matrix\(0 -1\.33 1\.33 0 40\.71 624\.67\)"',
     }
     for label, pattern in anchors.items():
         if not contains_exact_anchor(svg, pattern):
             errors.append(f"{svg_name}: missing anchor: {label}")
     check_no_legacy_page_marker(svg_name, svg, errors)
+
+
+def check_wave_anchor(svg_name: str, svg: str, errors: list[str], variant: str) -> None:
+    if variant == "toc":
+        pattern = r'<image[^>]+x="0"[^>]+y="120"[^>]+width="1280"[^>]+height="480"[^>]+toc_wave\.png'
+        label = "full-width TOC dotted wave at x=0 y=120 w=1280 h=480"
+    else:
+        pattern = r'<image[^>]+x="0"[^>]+y="316"[^>]+width="1280"[^>]+height="390"[^>]+toc_wave\.png'
+        label = "full-width lower dotted wave at x=0 y=316 w=1280 h=390"
+    if not contains_exact_anchor(svg, pattern):
+        errors.append(f"{svg_name}: missing anchor: {label}")
+
+
+def check_no_fullpage_raster(svg_name: str, svg: str, errors: list[str]) -> None:
+    for image_tag in re.findall(r'<image\b[^>]*>', svg):
+        width_match = re.search(r'width="([0-9.]+)"', image_tag)
+        height_match = re.search(r'height="([0-9.]+)"', image_tag)
+        if not width_match or not height_match:
+            continue
+        width = float(width_match.group(1))
+        height = float(height_match.group(1))
+        if width >= 1200 and height >= 650:
+            errors.append(f"{svg_name}: structural page appears flattened as a full-page image")
+
+
+def check_ending_structure(svg_name: str, svg: str, errors: list[str]) -> None:
+    if not contains_exact_anchor(svg, r'<rect[^>]+x="73"[^>]+y="170"[^>]+width="3"[^>]+height="76"'):
+        errors.append(f"{svg_name}: missing ending accent bar at x=73 y=170 w=3 h=76")
+    for label, pattern in ENDING_TEXT_ANCHORS.items():
+        if not contains_exact_anchor(svg, pattern):
+            errors.append(f"{svg_name}: missing anchor: {label}")
+    if len(re.findall(r'<text\b', svg)) < 6:
+        errors.append(f"{svg_name}: ending page must use editable text elements, not a flattened image")
+    check_no_fullpage_raster(svg_name, svg, errors)
 
 
 def check_no_legacy_page_marker(svg_name: str, svg: str, errors: list[str]) -> None:
@@ -114,20 +149,14 @@ def check_cover(template_dir: Path, errors: list[str]) -> None:
     for forbidden in ("{{SUBTITLE}}", "{{AUTHOR_EN}}", "{{PRESENTER}}"):
         if forbidden in svg:
             errors.append(f"01_cover.svg: forbidden cover placeholder {forbidden}; only title/author/date may vary")
-    if "toc_wave.png" not in svg:
-        errors.append("01_cover.svg: cover must use dotted wave artwork toc_wave.png")
+    check_wave_anchor("01_cover.svg", svg, errors, "lower")
 
 
 def check_ending(template_dir: Path, errors: list[str]) -> None:
     svg = read_text(template_dir / "04_ending.svg")
     check_shared_anchors("04_ending.svg", svg, errors)
-    if "{{" in svg or "}}" in svg:
-        errors.append("04_ending.svg: ending page must be fixed text; placeholders are forbidden")
-    for text in ENDING_FIXED_TEXT:
-        if text not in svg:
-            errors.append(f"04_ending.svg: fixed ending text missing or changed: {text}")
-    if "toc_wave.png" not in svg:
-        errors.append("04_ending.svg: ending must use dotted wave artwork toc_wave.png")
+    check_wave_anchor("04_ending.svg", svg, errors, "lower")
+    check_ending_structure("04_ending.svg", svg, errors)
 
 
 def check_content_templates(template_dir: Path, errors: list[str]) -> None:
@@ -136,6 +165,8 @@ def check_content_templates(template_dir: Path, errors: list[str]) -> None:
         if path.exists():
             svg = read_text(path)
             check_shared_anchors(name, svg, errors)
+            if name == "02_toc.svg":
+                check_wave_anchor(name, svg, errors, "toc")
     content = read_text(template_dir / "03_content.svg")
     for token in ("{{SECTION_NUM}}", "{{PAGE_TITLE}}", "{{CONTENT_AREA}}"):
         if token not in content:
@@ -156,9 +187,7 @@ def check_project_outputs(project_dir: Path, errors: list[str]) -> None:
     last = read_text(svgs[-1])
     if "toc_wave.png" not in first and "reference_toc_wave.png" not in first:
         errors.append(f"{svgs[0].name}: first slide must keep Goldwind dotted wave cover structure")
-    for text in ENDING_FIXED_TEXT:
-        if text not in last:
-            errors.append(f"{svgs[-1].name}: fixed ending text missing or changed: {text}")
+    check_ending_structure(svgs[-1].name, last, errors)
 
 
 def main() -> int:

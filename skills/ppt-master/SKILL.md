@@ -109,7 +109,7 @@ Goldwind customization rule:
 - The extracted style should guide colors, typography, page rhythm, header/footer treatment, logo placement, decorative motifs, chart styling, and image usage.
 - If the user explicitly says `金风通用模板`, `工作策划模板`, or asks to use the 2024 work-planning style as a reusable template, select the built-in optional template `金风通用模板`.
 - For `金风通用模板`, the cover page has only three dynamic text slots: `{{TITLE}}`, `{{AUTHOR}}`, and `{{DATE}}`. Use a user-provided title when present; otherwise auto-generate a title from the source material. Do not ask the user to edit any other cover text.
-- For `金风通用模板`, the ending page is fixed text and MUST NOT be changed, translated, summarized, parameterized, or regenerated.
+- For `金风通用模板`, the ending page MUST be rebuilt as editable SVG/PPT elements that match `04_ending.svg` in structure, coordinates, typography, logo/rail/wave/accent placement, and visual hierarchy. The current ending copy is the default value only; it may be changed when the user requests different wording. Never rasterize the ending page as a full-page image.
 
 ## Main Pipeline Scripts
 
@@ -189,7 +189,9 @@ Hard mimic requirements:
 2. Produce a project-level template mimic contract in `design_spec.md` (or a companion `<project_path>/template_mimic.md`) covering page-type mapping, title hierarchy, font plan, logo coordinates, left copyright rail, cover/TOC/ending structure, and reusable asset exclusions.
 3. Only promote true reusable template elements. Content-specific figures, including the simulation/arrow figure previously misidentified from the 2024 work-planning deck, MUST NOT be treated as template assets.
 4. For `金风通用模板`, the bottom-right three-stripe page-number block (`x=1204, y=620, w=76, h=60`) is a forbidden non-template artifact. Do not generate it on any page.
-5. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page fixed text only.
+5. If `金风通用模板` is used, preserve its cover and ending contracts exactly: cover title/name/date only; ending page element structure is locked to `04_ending.svg`, while ending text uses current defaults unless the user asks to modify it. The ending page must stay editable and must not be delivered as one flattened image.
+6. Preserve the dotted wave background as a full-width template layer: cover/ending use `x=0, y=316, w=1280, h=390`; TOC uses `x=0, y=120, w=1280, h=480`. Do not crop it to a left-side local decoration.
+7. Preserve the left rail copyright text at the imported anchor `matrix(0 -1.33 1.33 0 40.71 624.67)` with `font-size=8`; do not approximate it with a shifted rotated text box.
 
 If the reference is screenshots or images rather than PPTX, preserve them as style evidence and summarize visible style cues before Step 4.
 

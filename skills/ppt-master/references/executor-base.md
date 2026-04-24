@@ -23,8 +23,10 @@ When the selected template is `金风通用模板` or the project uses a histori
 - Follow the template's fixed coordinates for the top-right logo, left copyright rail, header line, section number, and quoted page title.
 - Do not add the bottom-right three-stripe page-number block (`x=1204, y=620`). It is a misidentified non-template artifact and is forbidden for `金风通用模板`.
 - Cover page text may vary only by `TITLE`, `AUTHOR`, and `DATE`. Use a user-provided title when available; otherwise generate one from the source material. Do not add or expose extra cover text placeholders.
-- Ending page text is fixed. Do not change, translate, summarize, rewrite, or parameterize any ending-page text.
-- Use dotted wave artwork for cover/TOC/ending pages. Do not use the content-specific simulation/arrow figure or unrelated wind/engineering images as reusable template assets.
+- Ending page structure is fixed to `04_ending.svg`: logo, left rail, dotted wave, accent bar, THANKS/title line, and organization/contact text positions must remain editable elements with the same coordinates and hierarchy. The default ending copy may be changed when the user explicitly requests different wording. Do not flatten or screenshot the ending page as a full-page image.
+- Use dotted wave artwork as a full-width layer for cover/TOC/ending pages: cover/ending `x=0 y=316 w=1280 h=390`, TOC `x=0 y=120 w=1280 h=480`. Do not shrink it into a left-side local decoration.
+- Keep the left rail copyright text at `matrix(0 -1.33 1.33 0 40.71 624.67)`, `font-size=8`; do not approximate this with a shifted rotated text box.
+- Do not use the content-specific simulation/arrow figure or unrelated wind/engineering images as reusable template assets.
 - On dense table/image pages, reserve distinct zones for tables, text, and screenshots. Images must not overlap any table text or paragraph text; if space is tight, reduce row height, crop screenshots, or split the slide.
 - After SVG generation and before notes/export, run `python3 scripts/template_mimic_check.py <project_path> --tolerance 0` and `python3 scripts/layout_sanity_check.py <project_path>`; fix any failure.
 
