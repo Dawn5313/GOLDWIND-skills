@@ -100,6 +100,13 @@ Recommended intake follow-up rules after the startup notice:
 - If only the research preference is missing, ask whether联网搜索 is needed and what should be searched.
 - If all three are available, do not ask redundant intake questions; proceed directly to Step 1.
 
+Goldwind customization rule:
+
+- If the user provides a historical PPT / PPTX style reference, the AI MUST treat it as the primary visual authority for this project.
+- Do not default to generic free design when a Goldwind historical PPT is available.
+- Extract and summarize the historical PPT style before writing the project `design_spec.md`.
+- The extracted style should guide colors, typography, page rhythm, header/footer treatment, logo placement, decorative motifs, chart styling, and image usage.
+
 ## Main Pipeline Scripts
 
 | Script | Purpose |
@@ -151,9 +158,31 @@ Rules:
 
 **✅ Checkpoint — Proceed to Step 1 only when intake is sufficiently complete.**
 
+### Step 0.5: Goldwind Style Reference Preparation
+
+🚧 **GATE**: Step 0 complete; `style_reference` is available.
+
+When the style reference includes a historical `.pptx` file, prepare it before normal content processing:
+
+```bash
+python3 ${SKILL_DIR}/scripts/pptx_template_import.py "<style_reference.pptx>" -o "<project_or_output_path>/style_reference_import"
+```
+
+Use the generated import package as the primary style evidence:
+
+- `manifest.json` for slide size, theme colors, fonts, assets, and page candidates
+- `master_layout_analysis.md` for reusable master/layout structure
+- `analysis.md` for page-type and content-pattern hints
+- `reference_svg_selection.json` and selected `svg/slide_*.svg` files for page rhythm, spacing, and visual motifs
+- extracted `assets/` for reusable logos, backgrounds, and brand imagery
+
+If the reference is screenshots or images rather than PPTX, preserve them as style evidence and summarize visible style cues before Step 4.
+
+**✅ Checkpoint — Style reference prepared and summarized; proceed to Step 1.**
+
 ### Step 1: Source Content Processing
 
-🚧 **GATE**: Step 0 complete; user has provided source material (PDF / DOCX / EPUB / URL / Markdown file / text description / conversation content — any form is acceptable).
+🚧 **GATE**: Step 0 and Step 0.5 complete; user has provided source material (PDF / DOCX / EPUB / URL / Markdown file / text description / conversation content — any form is acceptable).
 
 When the user provides non-Markdown content, convert immediately:
 
