@@ -120,6 +120,8 @@ Proactively provide a color scheme (HEX values) based on content characteristics
 
 ### f. Icon Usage Confirmation
 
+**Icon generation policy (hard rule)**: Standard PPT icons are vector assets from `templates/icons/`; they do not use `image_gen.py` and do not use any image model. `image_gen.py` is reserved for raster images such as backgrounds, photos, illustrations, decorative patterns, or large diagram-style images. Only classify an icon as AI-generated when the user explicitly asks for a custom icon or when all approved libraries lack a required metaphor after documented search; then record it as an image asset, including the active backend/model from `image_gen.py --list-backends` or environment configuration.
+
 | Option | Approach | Suitable Scenarios |
 |--------|----------|-------------------|
 | **A** | Emoji | Casual, playful, social media |
@@ -148,6 +150,8 @@ Built-in library contains 6700+ icons across three libraries:
 > 5. List the final icon inventory and chosen library in the Design Spec; Executor may only use icons from this list
 >
 > **Do NOT preload any index file** — use `ls | grep` to search on demand with zero token cost.
+>
+> **Goldwind default**: for `金风通用模板`, use `chunk` unless the user's content clearly requires a different single library. Never use AI image generation for ordinary Goldwind card/process/KPI icons.
 
 ### g. Typography Plan Confirmation (Font + Size)
 

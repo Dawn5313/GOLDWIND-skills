@@ -8,6 +8,8 @@ Receive the "Image Resource List" from the Design Specification & Content Outlin
 
 **Trigger condition**: When AI image generation is needed (standalone use or invoked within pipeline)
 
+> **Icon boundary**: The Image_Generator is not the default icon generator. Standard PPT icons must use the bundled SVG icon libraries in `templates/icons/` and are embedded by `finalize_svg.py`. Use Image_Generator for raster backgrounds, photos, illustrations, decorative patterns, or large diagram-style images. Only generate a custom icon here when the user explicitly asks for AI-generated icons or when no approved SVG library icon fits after documented search; in that case, record the active backend/model rather than calling it "image2".
+
 | Mode | Trigger | Description |
 |------|---------|-------------|
 | **Standalone** | Directly describe image needs | Generate single or multiple AI images |

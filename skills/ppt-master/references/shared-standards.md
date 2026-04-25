@@ -179,6 +179,7 @@ The following features are **absolutely forbidden** when generating SVGs — PPT
 - **Colors**: Use HEX values; for transparency use `fill-opacity` / `stroke-opacity`
 - **Image references**: `<image href="../images/xxx.png" preserveAspectRatio="xMidYMid slice"/>`
 - **Icon placeholders**: `<use data-icon="chunk/name" x="" y="" width="48" height="48" fill="#HEX"/>` (default library); or `tabler-filled/name` / `tabler-outline/name` when that library is chosen for the deck. (auto-embedded during post-processing). Always include the library prefix. **One presentation = one library — never mix libraries.**
+- **Icon source**: Standard PPT icons are bundled SVG assets, not AI-generated raster images. Do not use `image_gen.py` or image models for ordinary icons; reserve image generation for backgrounds, photos, illustrations, decorative patterns, or explicit custom icon requests.
 
 ### Element Grouping (Mandatory)
 

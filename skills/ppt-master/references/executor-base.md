@@ -121,6 +121,12 @@ File naming format: `<number>_<page_name>.svg`
 
 ## 4. Icon Usage
 
+### 4.0 Icon Source Policy
+
+Standard PPT icons MUST be selected from the bundled SVG icon libraries under `templates/icons/` and embedded as vector paths during `finalize_svg.py`. They do not use `image_gen.py`, `gpt-image-1`, `qwen-image-2.0-pro`, or any other image model.
+
+Use `image_gen.py` only for raster image assets such as backgrounds, photography, illustrations, decorative patterns, or large diagram-style images. If the user explicitly asks for custom AI-generated icons, or a necessary metaphor cannot be found after searching the approved icon library, treat the result as an image asset in `images/`, document the active backend/model, and do not mix it into the normal SVG icon inventory.
+
 Four approaches: **A: Emoji** (`<text>🚀</text>`) | **B: AI-generated** (SVG basic shapes) | **C: Built-in library** (`templates/icons/` 6700+ icons, recommended) | **D: Custom** (user-specified)
 
 **Built-in icons — Placeholder method (recommended)**:
@@ -183,6 +189,8 @@ ls skills/ppt-master/templates/icons/tabler-outline/ | grep chart
 > For self-evident names (home, user, file, search, arrow, etc.) — just `grep chunk/` directly without consulting the table.
 
 > ⚠️ **Icon validation rule**: If the Design Specification includes an icon inventory list, Executor may **only** use icons from that approved list. Before using any icon, verify it exists via `ls | grep` search. **Mixing icons from different libraries in the same presentation is FORBIDDEN** — use only the library specified in the Design Spec.
+
+> 🏢 **Goldwind note**: For `金风通用模板`, prefer `chunk` for engineering/internal reporting unless the design spec explicitly locks another single library. Do not use AI image generation for ordinary Goldwind icons.
 
 ---
 

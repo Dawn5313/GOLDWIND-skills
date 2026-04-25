@@ -149,6 +149,14 @@ For complete tool documentation, see `${SKILL_DIR}/scripts/README.md`.
 | Visualization templates | `${SKILL_DIR}/templates/charts/charts_index.json` | Query available visualization SVG templates (charts, infographics, diagrams, frameworks) |
 | Icon library | `${SKILL_DIR}/templates/icons/` | Search icons on demand: `ls templates/icons/<library>/ \| grep <keyword>` (libraries: `chunk/`, `tabler-filled/`, `tabler-outline/`) |
 
+## Icon Generation Policy
+
+- Standard PPT icons MUST come from the bundled SVG icon libraries in `${SKILL_DIR}/templates/icons/` and be embedded by `finalize_svg.py` / `embed_icons.py`. They do not use any image model.
+- Do not route ordinary UI icons, KPI icons, process-step icons, bullet icons, or card icons through `image_gen.py`.
+- `image_gen.py` is only for raster image assets such as backgrounds, photos, illustrations, decorative patterns, or large diagram-style images. It is not the default icon pipeline.
+- If a user explicitly requests a custom AI-generated icon or a required metaphor cannot be found after searching the approved icon library, treat it as an image asset, record it in the Image Resource List, and document the active backend/model from `python3 ${SKILL_DIR}/scripts/image_gen.py --list-backends` or the runtime `IMAGE_BACKEND` / provider model variables. Do not call it generically "image2".
+- For Goldwind/engineering/internal reporting decks, prefer the `chunk` icon library unless the design spec deliberately chooses another single library. One presentation still uses exactly one icon library.
+
 ## Standalone Workflows
 
 | Workflow | Path | Purpose |
