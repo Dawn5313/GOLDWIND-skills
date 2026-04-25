@@ -54,10 +54,11 @@ description: >
 > Instead, the AI MUST reply with **only** the following official startup notice in Chinese (minor punctuation polishing is allowed, but the meaning and structure must remain the same):
 >
 > ```text
-> 启动成功。现已进入金风科技PPT制作流程。为确保版式风格、内容整理及扩展资料准备准确无误，请您依次提供以下三项资料：
+> 启动成功。现已进入金风科技PPT制作流程。为确保版式风格、内容整理及扩展资料准备准确无误，请您依次提供以下四项资料：
 > 1. PPT样式参考：请发送一份您过往汇报中使用的PPT或历史模板文件，我将自动提取版式与视觉风格，并按该风格进行临摹制作；也可以选择使用本技能包中自带的金风通用模板。
 > 2. 内容素材资料：您可以直接发送文字内容，也可以发送一个或多个文件；我将自动完成整理、提炼与结构化处理，并用于后续PPT编排。
 > 3. 联网扩展需求：如需我联网补充资料，请明确说明希望扩展的是PPT内图片素材、Icon素材，还是内容资料；我将按您的要求执行扩展搜索与整理。如无需联网，也请直接说明。
+> 4. 图标素材需求：如您有企业图标素材库，请一并发送；如需AI生成自定义图标，请明确说明，确认后我可在正文页素材中使用AI生成的自定义图标；未说明时默认使用本技能包内置SVG图标库。
 > ```
 >
 > Mandatory behavior:
@@ -73,8 +74,10 @@ description: >
 >    - `style_reference`: historical PPT / reference style deck / brand style sample
 >    - `content_materials`: text, documents, spreadsheets, PDFs, PPTs, or other source content
 >    - `research_preference`: no search / search images-icons / search content / search both
-> 5. If one or more intake items are still missing after the first startup reply, the AI must stay in intake mode and ask only for the missing items in a concise, official tone. Do not skip ahead to Step 1.
-> 6. Once the intake items are sufficiently covered, continue into the standard pipeline below in strict serial order.
+>    - `icon_asset_preference`: built-in SVG library / user-provided icon library / AI-generated custom icons
+> 5. If one or more required intake items are still missing after the first startup reply (`style_reference`, `content_materials`, `research_preference`), the AI must stay in intake mode and ask only for the missing items in a concise, official tone. Do not skip ahead to Step 1.
+> 6. `icon_asset_preference` is non-blocking: if the user does not answer it, default to the built-in SVG icon library. If the user explicitly chooses AI-generated custom icons, those icons may be used as正文页素材 and must follow the Icon Generation Policy below.
+> 7. Once the intake items are sufficiently covered, continue into the standard pipeline below in strict serial order.
 
 ## Goldwind Intake Checklist
 
@@ -93,6 +96,10 @@ content_materials:
 research_preference:
 - no_search / images_icons / content / both
 - optional keyword or scope notes
+
+icon_asset_preference:
+- built_in_svg / user_provided_library / ai_custom_icons
+- notes on provided icon files or requested custom icon style
 ```
 
 Recommended intake follow-up rules after the startup notice:
@@ -100,7 +107,8 @@ Recommended intake follow-up rules after the startup notice:
 - If only the style reference is missing, ask only for the historical PPT / style reference.
 - If only the content materials are missing, ask only for the source materials to fill into the deck.
 - If only the research preference is missing, ask whether联网搜索 is needed and what should be searched.
-- If all three are available, do not ask redundant intake questions; proceed directly to Step 1.
+- If only the icon asset preference is missing, do not block; default to the built-in SVG icon library unless the user later requests a user-provided icon library or AI-generated custom icons.
+- If the required style reference, content materials, and research preference are available, do not ask redundant intake questions; proceed directly to Step 1. Missing icon asset preference defaults to the built-in SVG icon library.
 
 Goldwind customization rule:
 
